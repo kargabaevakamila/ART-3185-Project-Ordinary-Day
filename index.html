@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An Ordinary Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Idea: each photograph is shown the way one condition might see it. Moving the
+   magnifier over it reveals the original, with a reveal that matches the condition.
+   The page takes on the light of each scene. */
+@property --r{syntax:'<percentage>';inherits:false;initial-value:150%}
+:root{
+  color-scheme: light;
+  --paper:#EDEFEC; --ink:#131718; --muted:#556166; --rule:#C9CFCC;
+  --accent:#3B43C9;                                   /* lens-coating blue */
+  --bg:var(--paper); --fg:var(--ink); --mu:var(--muted); --ru:var(--rule); --ac:var(--accent);
+  --display:"Archivo","Arial Black","Helvetica Neue",Arial,sans-serif;
+  --body:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --gutter:clamp(16px,4.5vw,64px);
+  --navh:50px;
+  --lens:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Ccircle cx='13' cy='13' r='9' fill='rgba(255,255,255,.22)' stroke='white' stroke-width='5'/%3E%3Cpath d='M20 20 L30 30' stroke='white' stroke-width='7' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='13' r='9' fill='none' stroke='%23131718' stroke-width='2.2'/%3E%3Cpath d='M20 20 L30 30' stroke='%23131718' stroke-width='3.8' stroke-linecap='round'/%3E%3C/svg%3E") 13 13, zoom-in;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:clamp(17px,1.05vw + 10px,19px);line-height:1.55;overflow-x:clip;transition:background-color 1.4s ease,color 1.4s ease;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+p{margin:0}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:800;margin:0;text-wrap:balance;line-height:.98;letter-spacing:-.012em}
+em.serif{font-family:var(--body);font-style:italic;font-weight:400;font-stretch:100%;letter-spacing:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:2px}
+.wrap{padding-inline:var(--gutter)}
+.label{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+
+/* Words that wait out of focus; the magnifier clears them */
+.soft{filter:blur(2.4px);transition:filter .6s ease;cursor:var(--lens)}
+.soft:hover{filter:none}
+
+/* Top bar */
+.nav{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 24px;padding:13px var(--gutter);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--ru);transition:background-color 1.4s ease,border-color 1.4s ease}
+.brand{font-family:var(--display);font-weight:800;font-stretch:112%;font-size:.95rem;text-decoration:none}
+.brand em{font-family:var(--body);font-style:italic;font-weight:400}
+.nav nav{display:flex;flex-wrap:wrap;gap:4px 22px}
+.nav nav a{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--mu);padding:5px 0;border-bottom:1px solid transparent;transition:color .3s}
+.nav nav a:hover{color:var(--fg)}
+.nav nav a[aria-current="page"]{color:var(--fg);border-bottom-color:var(--fg)}
+
+/* Pages pull into focus when you open them */
+.view{display:none}
+.view.on{display:block;animation:pull .9s ease both}
+@keyframes pull{from{filter:blur(12px);opacity:.2}to{filter:none;opacity:1}}
+
+.pill{font-family:var(--mono);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:10px;border:1px solid currentColor;border-radius:999px;padding:11px 18px;color:var(--fg);background:transparent;cursor:pointer;transition:background-color .25s,color .25s}
+.pill:hover{background:var(--fg);color:var(--bg)}
+
+/* ---------- HOME ---------- */
+.hero{position:relative;background:#111;color:#F4F5F2;overflow:hidden;height:calc(100vh - var(--navh));height:calc(100svh - var(--navh));min-height:460px;max-height:900px}
+.hero-stage{position:absolute;inset:-6% 0 0 0;--x:62%;--y:46%;--r0:160px;cursor:var(--lens);touch-action:pan-y;will-change:transform}
+.hero-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.hero-stage .blurred{filter:blur(10px) saturate(.9);transform:scale(1.05)}
+.hero-stage .sharp{transform:scale(1.05);-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 0,#000 calc(var(--r0) * .68),transparent var(--r0));mask-image:radial-gradient(circle at var(--x) var(--y),#000 0,#000 calc(var(--r0) * .68),transparent var(--r0))}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,11,.5) 0%,rgba(8,10,11,0) 26%,rgba(8,10,11,0) 46%,rgba(8,10,11,.86) 100%);pointer-events:none}
+.hero-top{position:absolute;top:0;left:0;right:0;z-index:2;padding-block:16px;display:flex;justify-content:space-between;gap:16px;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#E3E7E3;pointer-events:none}
+.hero-copy{position:absolute;inset:auto 0 0 0;z-index:2;padding-block:clamp(24px,5vw,56px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end;pointer-events:none;will-change:transform,filter}
+.hero-copy h1{font-size:clamp(2.8rem,8.4vw,7.6rem);font-stretch:118%;line-height:.92;animation:focus 2.4s .2s ease both}
+@keyframes focus{from{filter:blur(16px);opacity:.4}to{filter:none;opacity:1}}
+.hero-copy .sub{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;margin-top:16px;color:#D9DED9}
+.hero-copy .pill{pointer-events:auto;color:#F4F5F2;background:rgba(10,12,13,.35);backdrop-filter:blur(6px)}
+.hero-copy .pill:hover{background:#F4F5F2;color:#111}
+
+.statement{padding-block:clamp(64px,10vw,130px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(28px,5vw,80px);align-items:end}
+.core{font-family:var(--display);font-weight:600;font-stretch:104%;font-size:clamp(1.5rem,3.2vw,2.5rem);line-height:1.18;margin-top:14px;text-wrap:balance}
+.side p{color:var(--mu);max-width:40ch;margin-bottom:22px}
+
+/* The day as a film strip: scroll down, the frames slide sideways; the one in the middle is in focus */
+.reel{position:relative}
+.reel-pin{position:sticky;top:var(--navh);height:calc(100vh - var(--navh));height:calc(100svh - var(--navh));overflow:hidden;display:grid;grid-template-rows:auto 1fr;padding-top:clamp(18px,3vh,36px)}
+.reel-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.reel-head .count{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;color:var(--mu);font-variant-numeric:tabular-nums}
+.track{display:flex;align-items:center;gap:clamp(14px,2vw,28px);padding-inline:var(--gutter) 30vw;will-change:transform}
+.tile{--h:min(48vh,26vw + 120px);flex:none;width:calc(var(--h) * var(--ar));display:grid;gap:12px;text-decoration:none;cursor:var(--lens)}
+.tile .ph{height:var(--h);overflow:hidden;border-radius:2px;background:#0f1213}
+.tile img{width:100%;height:100%;object-fit:contain;will-change:filter}
+.tile .t{display:grid;gap:2px}
+.tile .t b{font-family:var(--mono);font-weight:500;font-size:.7rem;color:var(--ac)}
+.tile .t span{font-family:var(--display);font-weight:700;font-stretch:108%;font-size:clamp(1rem,1.5vw,1.3rem);line-height:1.1}
+.tile .t i{font-size:.95rem;color:var(--mu)}
+.reel-end{flex:none;width:clamp(220px,26vw,380px);display:grid;gap:18px;align-content:center}
+.reel-end p{font-family:var(--display);font-weight:600;font-stretch:104%;font-size:clamp(1.3rem,2.2vw,1.9rem);line-height:1.15}
+
+/* ---------- PHOTOGRAPHS ---------- */
+.photos-intro{min-height:calc(78vh - var(--navh));display:grid;align-content:end;gap:16px;padding:clamp(40px,8vh,90px) var(--gutter) clamp(20px,4vh,40px)}
+.photos-intro h1{font-size:clamp(2.4rem,6.6vw,5.6rem);font-stretch:116%;max-width:14ch}
+.photos-intro p{color:var(--mu);max-width:50ch}
+.scroll-cue{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:10px;margin-top:8px}
+.scroll-cue::after{content:"";width:1px;height:38px;background:currentColor;animation:cue 1.8s ease-in-out infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
+
+.scene{position:relative;display:grid;grid-template-columns:minmax(0,1.75fr) minmax(250px,.8fr);gap:clamp(28px,4.5vw,80px);align-items:center;padding:clamp(70px,14vh,160px) var(--gutter)}
+.scene.flip{grid-template-columns:minmax(250px,.8fr) minmax(0,1.75fr)}
+.scene.flip .stage{order:2}
+.bignum{position:absolute;z-index:0;top:clamp(20px,6vh,70px);font-family:var(--display);font-weight:800;font-stretch:125%;font-size:clamp(7rem,20vw,19rem);line-height:.8;color:var(--ru);opacity:.42;pointer-events:none;user-select:none;will-change:transform;transition:color 1.4s}
+.scene .bignum{right:var(--gutter)}
+.scene.flip .bignum{right:auto;left:var(--gutter)}
+.stage,.cap{position:relative;z-index:1}
+.stage{display:flex;justify-content:center;min-width:0;will-change:transform}
+
+/* The frame always has the photo's own shape, so nothing is cropped */
+.frame{position:relative;margin:0;width:min(100%,calc(76vh * var(--ar)));aspect-ratio:var(--ar);overflow:hidden;border-radius:2px;background:#0B0D0E;cursor:var(--lens);
+  clip-path:inset(9% 7% 9% 7%);opacity:0;transform:translate3d(0,50px,0) scale(.97);
+  transition:clip-path 1.5s cubic-bezier(.2,.75,.1,1),opacity 1s ease,transform 1.5s cubic-bezier(.2,.75,.1,1)}
+.scene.in .frame{clip-path:inset(0);opacity:1;transform:none}
+.stack{position:absolute;inset:0;transform:scale(1.08);transition:transform 2.2s cubic-bezier(.2,.75,.1,1)}
+.scene.in .stack{transform:none}
+.stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.ill.v{opacity:0;transition:opacity .8s ease}
+.ill.v.on{opacity:1}
+.tag{position:absolute;left:10px;top:10px;z-index:4;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(10,12,13,.72);color:#F4F5F2;padding:5px 8px;border-radius:2px;pointer-events:none;transition:background-color .4s,color .4s}
+.frame.hover .tag{background:#F4F5F2;color:#111}
+.hint{position:absolute;right:10px;bottom:10px;z-index:4;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:#F4F5F2;background:rgba(10,12,13,.55);padding:4px 7px;border-radius:2px;pointer-events:none;opacity:0;transition:opacity .8s}
+.scene.in .hint{opacity:1;transition-delay:1.6s}
+.frame.hover .hint{opacity:0;transition-delay:0s}
+
+/* ---------- The reveal: the original appears in a way that matches each condition ---------- */
+.clear,.clear2{--rt:1.1s;opacity:0;pointer-events:none;
+  transition:opacity var(--rt) ease,filter var(--rt) ease,transform var(--rt) cubic-bezier(.2,.7,.2,1),clip-path var(--rt) cubic-bezier(.65,0,.25,1),--r var(--rt) cubic-bezier(.65,0,.25,1)}
+.frame.hover .clear{opacity:1;filter:none;transform:none}
+/* Myopia: like putting glasses on */
+[data-fx="myopia"] .clear{filter:blur(18px)}
+/* Cataract: the haze lifts */
+[data-fx="cataract"] .clear{filter:brightness(1.5) contrast(.5) sepia(.5) blur(4px)}
+/* Double vision: two images slide together into one */
+[data-fx="double"] .clear{transform:translateX(-3.5%)}
+[data-fx="double"] .clear2{transform:translateX(3.5%)}
+[data-fx="double"].hover .clear2{opacity:.5;transform:none;transition:opacity .35s ease,transform var(--rt) cubic-bezier(.2,.7,.2,1)}
+[data-fx="double"].hover.merged .clear2{opacity:0;transition:opacity .5s ease}
+/* Astigmatism: the stretched, smeared light pulls back into shape */
+[data-fx="astig"] .clear{transform:scaleX(1.09) skewX(-2deg);filter:blur(7px)}
+/* Glaucoma: sight opens outwards from the centre */
+[data-fx="periphery"] .clear{opacity:1;clip-path:circle(0% at 50% 55%)}
+[data-fx="periphery"].hover .clear{clip-path:circle(80% at 50% 55%)}
+/* Diabetic retinopathy: the spots dissolve and the sign comes into focus */
+[data-fx="patches"] .clear{filter:blur(9px) contrast(.8);transform:scale(1.03)}
+/* Hyperopia: stepping back until it is readable */
+[data-fx="hyperopia"] .clear{transform:scale(1.2);filter:blur(10px)}
+/* Photophobia: the glare settles */
+[data-fx="glare"] .clear{filter:brightness(2.6) contrast(.55)}
+/* Amblyopia: the shifted, weaker image slides into line */
+[data-fx="oneeye"] .clear{transform:translateX(4%);filter:blur(6px)}
+/* Macular degeneration: sight returns from the edges, the centre last */
+[data-fx="central"] .clear{opacity:1;-webkit-mask-image:radial-gradient(circle at var(--cx,50%) var(--cy,40%),transparent var(--r),#000 calc(var(--r) + 14%));mask-image:radial-gradient(circle at var(--cx,50%) var(--cy,40%),transparent var(--r),#000 calc(var(--r) + 14%))}
+[data-fx="central"].hover .clear{--r:-15%}
+/* Hemianopia: light sweeps across into the missing half */
+[data-fx="hemi"] .clear{opacity:1;clip-path:inset(0 0 0 100%)}
+[data-fx="hemi"].hover .clear{clip-path:inset(0 0 0 0)}
+/* Night blindness: the eyes adjust slowly */
+[data-fx="lowlight"] .clear{--rt:1.8s;filter:brightness(.12)}
+/* Colour blindness: colour flows back in */
+[data-fx="colour"] .clear{filter:saturate(0)}
+/* Severe low vision: the shapes slowly gather into detail */
+[data-fx="lowvision"] .clear{--rt:1.6s;filter:blur(40px)}
+
+/* Caption: lines rise in one after another */
+.cap{display:grid;gap:12px;align-content:center;will-change:transform}
+.cap > *{opacity:0;transform:translate3d(0,22px,0);transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.75,.1,1)}
+.scene.in .cap > *{opacity:1;transform:none}
+.scene.in .cap > :nth-child(2){transition-delay:.12s}
+.scene.in .cap > :nth-child(3){transition-delay:.24s}
+.scene.in .cap > :nth-child(4){transition-delay:.38s}
+.scene.in .cap > :nth-child(5){transition-delay:.52s}
+.scene.in .cap > :nth-child(6){transition-delay:.66s}
+.cap .num{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;color:var(--mu);font-variant-numeric:tabular-nums}
+.cap .num b{font-weight:500;color:var(--ac)}
+.cap h2{font-size:clamp(2rem,3.7vw,3.5rem);font-stretch:112%;transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.75,.1,1),filter 1.6s ease;filter:blur(8px)}
+.scene.in .cap h2{filter:none}
+.cap .plain{font-style:italic;font-size:1.2rem;line-height:1.3;color:var(--fg)}
+.cap .moment{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);border-top:1px solid var(--ru);padding-top:12px;transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.75,.1,1),border-color 1.4s}
+.cap .moment span{color:var(--mu)}
+.cap .desc{font-size:1.04rem;line-height:1.55;max-width:38ch;color:var(--mu)}
+.mini{display:flex;gap:12px;align-items:center;margin:2px 0 0}
+.mini img{width:120px;height:auto;border-radius:2px}
+.mini figcaption{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+
+/* Colour blindness switcher */
+.cvd{display:grid;gap:6px}
+.cvd .opts{display:flex;flex-wrap:wrap;gap:6px}
+.cvd button{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;border:1px solid var(--ru);background:transparent;border-radius:999px;padding:7px 11px;cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+.cvd button:hover{border-color:var(--fg)}
+.cvd button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.cvd .note{font-style:italic;color:var(--mu);font-size:.98rem;min-height:2.9em}
+
+.dots{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:30;display:none;flex-direction:column;gap:2px}
+.photo-on .dots{display:flex}
+.dots a{display:block;width:24px;height:16px;position:relative}
+.dots a::after{content:"";position:absolute;right:4px;top:7px;width:8px;height:2px;background:var(--mu);opacity:.5;transition:width .35s,opacity .35s,background-color .35s}
+.dots a:hover::after{width:14px;opacity:1}
+.dots a.now::after{width:18px;opacity:1;background:var(--fg)}
+
+.endcard{min-height:80vh;display:grid;align-content:center;gap:26px;padding:80px var(--gutter)}
+.endcard h2{font-size:clamp(2rem,5.4vw,4.6rem);font-stretch:116%;max-width:16ch}
+.endcard .row{display:flex;flex-wrap:wrap;gap:12px}
+
+/* ---------- CONDITIONS & ABOUT ---------- */
+.page{padding:clamp(40px,7vw,90px) var(--gutter) 100px;max-width:1280px;margin:0 auto}
+.page-head{display:grid;gap:14px;margin-bottom:clamp(28px,4vw,52px)}
+.page-head h1{font-size:clamp(2.3rem,6.4vw,5.4rem);font-stretch:116%}
+.page-head p{color:var(--mu);max-width:54ch}
+.fam-block{display:grid;grid-template-columns:minmax(120px,.28fr) minmax(0,1fr);gap:12px 32px;padding-block:22px;border-top:1px solid var(--fg)}
+.fam-block h2{font-size:clamp(1.3rem,2.2vw,1.9rem);font-stretch:112%}
+.fam-block .fam-note{font-style:italic;color:var(--mu);font-size:1rem;margin-top:8px}
+.row-c{display:grid;grid-template-columns:3ch 110px minmax(0,1fr) minmax(0,1.1fr) auto;gap:8px 22px;align-items:center;padding:12px 0;border-bottom:1px solid var(--ru);text-decoration:none}
+.row-c:last-child{border-bottom:0}
+.row-c .n{font-family:var(--mono);font-size:.76rem;color:var(--ac)}
+.row-c .th{height:72px;display:flex;justify-content:center;align-items:center;cursor:var(--lens)}
+.row-c .th img{max-height:72px;width:auto;border-radius:2px;transition:filter .5s}
+.row-c h3{font-size:clamp(1.05rem,1.6vw,1.4rem);font-stretch:108%;line-height:1.1}
+.row-c p{color:var(--mu);font-style:italic;font-size:1rem}
+.row-c .go{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);white-space:nowrap}
+.row-c:hover .go{color:var(--fg)}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px 56px;margin-bottom:clamp(48px,6vw,80px)}
+.cols section{border-top:1px solid var(--fg);padding-top:14px;display:grid;gap:10px;align-content:start}
+.h-mono{font-family:var(--mono);font-weight:500;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+.cols p,.cols li{color:var(--mu);font-size:1rem}
+.cols ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.cols dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+.cols dt{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);padding-top:4px}
+.cols dd{margin:0}
+.method{border-top:1px solid var(--fg);padding-top:14px}
+.method .lede{color:var(--mu);max-width:62ch;margin:10px 0 18px;font-size:1rem}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:.95rem}
+th{font-family:var(--mono);font-weight:500;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);text-align:left;padding:8px 14px 8px 0;border-bottom:1px solid var(--fg)}
+td{padding:11px 14px 11px 0;border-bottom:1px solid var(--ru);vertical-align:top}
+td:first-child{font-family:var(--mono);font-size:.74rem;color:var(--ac);white-space:nowrap}
+td.c{font-family:var(--display);font-weight:700;font-stretch:106%}
+td.c small{display:block;font-family:var(--body);font-weight:400;font-style:italic;font-size:.9rem;color:var(--mu)}
+td a{color:var(--fg)}
+.general{margin-top:clamp(36px,5vw,60px)}
+
+@media (max-width:820px){
+  .statement,.hero-copy{grid-template-columns:1fr}
+  .scene,.scene.flip{grid-template-columns:minmax(0,1fr);gap:22px;padding-block:64px}
+  .scene.flip .stage{order:0}
+  .frame{width:min(100%,calc(70vh * var(--ar)))}
+  .bignum{font-size:8rem;top:20px}
+  .dots{display:none!important}
+  .fam-block{grid-template-columns:1fr}
+  .row-c{grid-template-columns:3ch 90px minmax(0,1fr)}
+  .row-c p,.row-c .go{grid-column:3}
+}
+/* Reduced motion: plain photographs, no movement */
+html.rm .reel-pin{position:relative;height:auto;overflow:visible}
+html.rm .track{overflow-x:auto;padding-bottom:20px}
+html.rm .frame,html.rm .stack,html.rm .cap > *{clip-path:none;opacity:1;transform:none;filter:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#home">An <em>Ordinary</em> Day</a>
+  <nav aria-label="Main">
+    <a href="#home" data-nav="home">Home</a>
+    <a href="#photographs" data-nav="photographs">Photographs</a>
+    <a href="#conditions" data-nav="conditions">Conditions</a>
+    <a href="#about" data-nav="about">About the project</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section class="view" id="v-home" aria-label="Home">
+    <div class="hero" id="hero">
+      <div class="hero-stage" id="heroStage">
+        <img class="blurred" src="home.jpg" alt="">
+        <img class="sharp" src="home.jpg" alt="University buildings on a green hillside under a cloudy sky">
+      </div>
+      <div class="hero-top wrap"><span>A photo essay · ART3185</span><span>Hong Kong · 2026</span></div>
+      <div class="hero-copy wrap" id="heroCopy">
+        <div>
+          <h1>An <em class="serif">Ordinary</em> Day</h1>
+          <p class="sub">Fourteen moments of a student's day, seen through fourteen eye conditions</p>
+        </div>
+        <a class="pill" href="#photographs">Start the day <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+
+    <div class="statement wrap">
+      <div>
+        <span class="label">Statement</span>
+        <p class="core">An ordinary day is full of small visual tasks we never notice: <span class="soft">crossing a road</span>, <span class="soft">reading a price tag</span>, <span class="soft">recognising a friend</span>, <span class="soft">finding the right room</span>. Not everyone sees them the same way.</p>
+      </div>
+      <div class="side">
+        <p>Each photograph shows a moment of the day the way one eye condition might see it. Move the magnifier over it to reveal the original.</p>
+        <a class="pill" href="#photographs">Start the day <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="reel" id="reel">
+      <div class="reel-pin">
+        <div class="reel-head wrap"><span class="label">The day at a glance</span><span class="count" id="reelCount">01 / 14</span></div>
+        <div class="track" id="track"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTOGRAPHS -->
+  <section class="view" id="v-photo" aria-label="Photographs">
+    <div class="photos-intro">
+      <span class="label">Photographs · 2026</span>
+      <h1>One day, fourteen ways of <em class="serif">seeing</em></h1>
+      <p>From the alarm to dinner, each photograph is seen through one eye condition. Move the magnifier over a photo to reveal the original.</p>
+      <span class="scroll-cue">Scroll</span>
+    </div>
+    <div id="scenes"></div>
+    <div class="endcard" id="endcard">
+      <span class="label">End of the day</span>
+      <h2>The same day. Fourteen ways of <em class="serif">seeing</em> it.</h2>
+      <div class="row">
+        <a class="pill" href="#conditions">All conditions <span aria-hidden="true">→</span></a>
+        <a class="pill" href="#about">About the project</a>
+      </div>
+    </div>
+    <nav class="dots" id="dots" aria-label="Jump to a photograph"></nav>
+  </section>
+
+  <!-- CONDITIONS -->
+  <section class="view" id="v-conditions" aria-label="Conditions">
+    <div class="page">
+      <div class="page-head">
+        <span class="label">Index</span>
+        <h1>Fourteen ways of <em class="serif">seeing</em></h1>
+        <p>The eye conditions, grouped by what they change. Choose one to open its photograph.</p>
+      </div>
+      <div id="families"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT THE PROJECT -->
+  <section class="view" id="v-about" aria-label="About the project">
+    <div class="page">
+      <div class="page-head">
+        <span class="label">About the project</span>
+        <h1>How the photographs were <em class="serif">made</em></h1>
+        <p>A photo essay about how one ordinary day can look to people who <span class="soft">see differently</span>.</p>
+      </div>
+
+      <div class="cols">
+        <section>
+          <h2 class="h-mono">Project</h2>
+          <dl>
+            <dt>Title</dt><dd>An Ordinary Day</dd>
+            <dt>Year</dt><dd>2026</dd>
+            <dt>Course</dt><dd>ART3185 Digital Imaging and Interactive Media</dd>
+            <dt>By</dt><dd>Kamila Kargabaeva</dd>
+            <dt>SID</dt><dd>11534331</dd>
+          </dl>
+        </section>
+        <section>
+          <h2 class="h-mono">Contact</h2>
+          <p><a href="mailto:s1153433@s.eduhk.hk">s1153433@s.eduhk.hk</a></p>
+        </section>
+        <section>
+          <h2 class="h-mono">Notes</h2>
+          <ul>
+            <li>All photographs were taken by Kamila Kargabaeva in Hong Kong in 2026.</li>
+            <li>The edited versions are illustrations, not medical reproductions. People with the same condition see differently.</li>
+            <li>Website code built with help from Claude (Anthropic).</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="method">
+        <h2 class="h-mono">How each condition was researched and edited</h2>
+        <p class="lede">Each edit starts from a medical description of what the condition changes, then recreates that change in Photoshop. The edits are illustrations, not exact reproductions.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Condition</th><th>What the research describes</th><th>How it was edited</th><th>Source</th></tr></thead>
+          <tbody id="method"></tbody>
+        </table></div>
+      </div>
+
+      <div class="cols general">
+        <section>
+          <h2 class="h-mono">General sources</h2>
+          <ul>
+            <li><a href="https://www.who.int/news-room/fact-sheets/detail/blindness-and-visual-impairment">World Health Organization, blindness and vision impairment</a></li>
+            <li><a href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/low-vision">National Eye Institute, low vision</a></li>
+            <li><a href="https://www.nei.nih.gov/about/education-and-outreach/see-what-i-see-virtual-reality-eye-disease-experience">National Eye Institute, "See What I See" eye disease simulations</a></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   EDIT HERE: the photographs, in order.
+   file   -> file name after original- and edited-
+   ar     -> the photo's shape (width / height)
+   name   -> the eye condition        plain -> what it is, in plain words
+   title  -> the moment of the day    desc  -> the caption
+   fx     -> the reveal style when the magnifier is over the photo
+   bg     -> page colour while this photo is on screen
+   research, how, src -> the About page table
+   ============================================================ */
+var PHOTOS = [
+  {file:"01-alarm.jpg", ar:1.4993, fx:"myopia", fam:"Focus", bg:"#E6E9E7",
+   name:"Myopia", plain:"Short-sightedness", title:"Waking Up",
+   desc:"The alarm goes off and the room is a soft blur. Only the blanket closest to the eyes is sharp; the shelves and the door wait for glasses.",
+   alt:"A dorm room seen from the bed, with a grey blanket in the foreground",
+   research:"Distant objects look blurry; close objects stay clear.",
+   how:"Lens Blur that grows with distance; the blanket closest to the eye stays almost sharp.",
+   src:["RNIB, myopia (short-sightedness)","https://www.rnib.org.uk/your-eyes/eye-conditions-az/myopia-short-sightedness/"]},
+  {file:"02-first-light.jpg", ar:1.5748, fx:"cataract", fam:"Light", bg:"#ECEBE3",
+   name:"Cataract", plain:"Clouding of the eye's lens", title:"View from the Dorm",
+   desc:"The morning view looks as if someone breathed on the glass. The red roof turns dull, the hills lose their edges and the light becomes glare.",
+   alt:"A red-tiled roof below green hills in soft morning light",
+   research:"A cloudy lens makes vision blurry or hazy and colours look faded.",
+   how:"Lower contrast and saturation, a warm yellow tint, a soft white haze and slight blur.",
+   src:["National Eye Institute, cataracts","https://www.nei.nih.gov/health/cataract"]},
+  {file:"03-kerbside.jpg", ar:1.5004, fx:"double", fam:"Focus", bg:"#E2E4E0",
+   name:"Diplopia", plain:"Double vision", title:"Crossing the Road",
+   desc:"Every road marking appears twice. Which yellow line is the real one? Stepping off the pavement turns into a guess.",
+   alt:"Looking down at a foot stepping over a yellow road marking",
+   research:"Looking at one object but seeing two images of it.",
+   how:"Duplicate layer moved sideways at reduced opacity, so every edge appears twice.",
+   src:["NHS, double vision","https://www.nhs.uk/conditions/double-vision/"]},
+  {file:"04-next-train.jpg", ar:1.4993, fx:"astig", fam:"Focus", bg:"#D7DCDB",
+   name:"Astigmatism", plain:"Blurred, streaky vision at every distance", title:"Waiting for the Train",
+   desc:"Under the platform's strip lights, every edge smears and every light streaks. The arrival screen stays out of reach, however close you stand.",
+   alt:"A man looks at his phone beside platform screen doors in a station",
+   research:"Blurred or distorted vision, both near and far.",
+   how:"Streaks of light from the ceiling lamps and a faint offset duplicate, so edges smear and double.",
+   src:["World Health Organization, refractive errors","https://www.who.int/news-room/questions-and-answers/item/blindness-and-vision-impairment-refractive-errors"]},
+  {file:"05-walkway.jpg", ar:1.5060, fx:"periphery", fam:"Field", bg:"#E1E5E3",
+   name:"Glaucoma", plain:"Loss of side vision", title:"Walking to Class",
+   desc:"The walkway ahead is clear, but the planters, railings and people at the sides slip away. Glaucoma often takes side vision so slowly that people don't notice it going.",
+   alt:"A paved campus walkway lined with flower beds under a blue sky",
+   research:"Glaucoma usually takes side vision first; it can feel like looking through a tunnel.",
+   how:"Blurred, darkened edges around a clear centre, with an uneven boundary instead of a perfect ring.",
+   src:["National Eye Institute, glaucoma","https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/glaucoma"]},
+  {file:"06-block-b2.jpg", ar:1.4104, fx:"patches", fam:"Field", bg:"#E4E1D9",
+   name:"Diabetic retinopathy", plain:"Dark spots from damaged blood vessels in the eye", title:"Finding the Room",
+   desc:"Dark spots float over the directory, hiding a room number here and an arrow there. Finding the right room means reading the sign in pieces.",
+   alt:"A grey campus directory sign for Block B2 with arrows and room names",
+   research:"Blurry vision and dark floating spots or streaks.",
+   how:"Irregular dark blotches over the room names and arrows, plus an overall blur.",
+   src:["National Eye Institute, diabetic retinopathy","https://www.nei.nih.gov/health/diabetic/retinopathy"]},
+  {file:"07-small-print.jpg", ar:1.4255, fx:"hyperopia", fam:"Focus", bg:"#E9E6EE",
+   name:"Hyperopia", plain:"Long-sightedness", title:"At 7-Eleven",
+   desc:"The bright packets are easy to spot from across the shop. Up close, the flavours and prices dissolve, just when you need to read them.",
+   alt:"Shelves of colourful sweets and gummies with small price tags",
+   research:"Near tasks can be blurry, depending on the degree.",
+   how:"Strong blur over the near shelf, labels and price tags; only the big shapes and colours stay readable.",
+   src:["World Health Organization, refractive errors","https://www.who.int/news-room/questions-and-answers/item/blindness-and-vision-impairment-refractive-errors"]},
+  {file:"08-lunch-break.jpg", ar:1.5129, fx:"glare", fam:"Light", bg:"#F6F4EC",
+   name:"Photophobia", plain:"Sensitivity to light", title:"Lunch Outside",
+   desc:"Midday sun bounces off the pale paving and the tables. Lunch outside becomes something to squint through, then escape from.",
+   alt:"People eating at outdoor tables on a campus podium under a bright sky",
+   research:"Bright light causes discomfort; people squint or shield their eyes.",
+   how:"Raised exposure and highlights, lower contrast, and a bloom of light from the sky.",
+   src:["Cleveland Clinic, photophobia","https://my.clevelandclinic.org/health/symptoms/photophobia"]},
+  {file:"09-through-ball.jpg", ar:1.5004, fx:"oneeye", fam:"Field", bg:"#E8E3D3",
+   name:"Amblyopia", plain:"Lazy eye", title:"Football After Class",
+   desc:"When one eye sees much less than the other, depth is hard to judge. A ball in the air is hard to place: near, far, or already past you.",
+   alt:"Two players chase a football in front of a goal on a green pitch",
+   research:"Poor vision in one eye makes it hard to tell how near or far something is.",
+   how:"A blurred, shifted copy layered over the scene, so the players and the ball no longer line up.",
+   src:["National Eye Institute, amblyopia","https://www.nei.nih.gov/health/amblyopia/amblyopia_guide"]},
+  {file:"10-catching-up.jpg", ar:1.4993, fx:"central", cx:"45%", cy:"34%", fam:"Field", bg:"#E5DACA",
+   name:"Macular degeneration", plain:"Loss of central vision", title:"Meeting a Friend",
+   desc:"A friend laughs across the table, but the centre of the view, where her face should be, is missing. Everything around her stays sharp.",
+   alt:"A smiling woman in a patterned headscarf raises an iced tea outside a glass building",
+   research:"Age-related macular degeneration blurs central vision; a blurry or blank area can form near the centre.",
+   how:"A soft, dark, blurred patch over the face; everything around it stays sharp.",
+   src:["National Eye Institute, age-related macular degeneration","https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/age-related-macular-degeneration"]},
+  {file:"11-half-a-slide.jpg", ar:0.8845, fx:"hemi", fam:"Field", bg:"#1B1E23",
+   name:"Hemianopia", plain:"Loss of half the field of vision", title:"Evening Lecture",
+   desc:"The left half of every line on the slide is gone. You start reading from the middle of each sentence and keep turning your head to find where it begins.",
+   alt:"A lecturer points at a bright slide about responsible AI use in a dark lecture room",
+   research:"Vision loss on the same side of both eyes, usually after a stroke or brain injury; half the view can look dim or dark, and reading becomes hard.",
+   how:"Dark gradient over the left half of the frame, softened at the edge so the middle stays readable.",
+   src:["Cleveland Clinic, homonymous hemianopia","https://my.clevelandclinic.org/health/diseases/15766-homonymous-hemianopsia"]},
+  {file:"12-same-palms.jpg", day:"12-same-palms-day.jpg", ar:1.4641, fx:"lowlight", fam:"Light", bg:"#0E1114",
+   name:"Night blindness", plain:"Poor vision in dim light", title:"Palms at Dusk",
+   desc:"The same palm trees that were bright at midday disappear as the light fades. Eyes that cannot adjust to the dark lose the path home.",
+   alt:"Palm trees in silhouette against a dusk sky with a small moon",
+   research:"Night blindness (nyctalopia) makes it hard to see in dim light and to adjust between bright and dark.",
+   how:"Exposure and shadows pulled far down, colour reduced and noise added; the daytime photo shows the same place for comparison.",
+   src:["Cleveland Clinic, night blindness","https://my.clevelandclinic.org/health/symptoms/10118-night-blindness-nyctalopia"]},
+  {file:"13-ripe-or-not.jpg", ar:1.5004, fx:"colour", fam:"Colour", bg:"#201D19",
+   name:"Colour blindness", plain:"Colour vision deficiency", title:"Fruit Market",
+   desc:"At the fruit stall, ripe and unripe can look the same. Switch between four types of colour blindness to see how the avocados, kiwis and persimmons change.",
+   alt:"A market stall stacked with avocados, kiwis, persimmons and pomelos",
+   research:"Some colours become hard to tell apart; red-green is the most common type.",
+   how:"Four versions, one for each type: protanopia, deuteranopia, tritanopia and achromatopsia. Viewers can switch between them.",
+   src:["National Eye Institute, colour blindness","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/color-blindness"]},
+  {file:"14-dinner.jpg", ar:1.5038, fx:"lowvision", fam:"Beyond sight", bg:"#141619",
+   name:"Severe low vision", plain:"Very little usable sight, even with glasses", title:"Cooking Dinner",
+   desc:"At the end of the day, dinner is made with sound and smell as much as sight. The sizzle says when to turn the patties; the hand knows where the pan is.",
+   alt:"A hand turning patties in a frying pan, seen from above",
+   research:"Low vision can't be fully corrected with glasses; people rely more on other senses and tools.",
+   how:"Heavy blur and low contrast, so only light, dark and the shape of the pan remain.",
+   src:["National Eye Institute, low vision","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/low-vision"]}
+];
+var FAMILIES = [
+  ["Focus","Where the eye brings the image into focus."],
+  ["Field","Which parts of the view are missing or weaker."],
+  ["Light","How the eye copes with bright and dim light."],
+  ["Colour","Which colours can be told apart."],
+  ["Beyond sight","When other senses lead."]
+];
+/* Colour blindness types for the fruit photo: edited-13-ripe-or-not-<key>.jpg */
+var CVD = [
+  {key:"deuteranopia",  name:"Deuteranopia",  note:"Green-blind, the most common type. Reds and greens drift towards the same olive-yellow."},
+  {key:"protanopia",    name:"Protanopia",    note:"Red-blind. Reds lose their strength and are hard to tell from greens."},
+  {key:"tritanopia",    name:"Tritanopia",    note:"Blue-yellow, less common. Blues and yellows get confused and colours shift towards pinks and teals."},
+  {key:"achromatopsia", name:"Achromatopsia", note:"No colour at all, which is rare. Only light and dark remain."}
+];
+
+var ORIGINAL="original-", EDITED="edited-", N=PHOTOS.length;
+var RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(RM) document.documentElement.classList.add("rm");
+function $(id){return document.getElementById(id)}
+function pad(n){return (n<10?"0":"")+n}
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+function esc(s){return String(s).replace(/"/g,"&quot;")}
+function illSrc(p){ return p.fx==="colour" ? EDITED+p.file.replace(".jpg","-"+CVD[0].key+".jpg") : EDITED+p.file }
+function goTo(y,instant){ scrollTo({top:y,behavior:instant||RM?"auto":"smooth"}) }
+
+/* ---------- Build pages ---------- */
+var scenes=[];
+PHOTOS.forEach(function(p,i){
+  var n=i+1;
+
+  /* home film strip: the edited photos, each in its own shape */
+  var t=document.createElement("a"); t.className="tile"; t.href="#photo-"+n; t.style.setProperty("--ar",p.ar);
+  t.innerHTML='<div class="ph"><img loading="lazy" src="'+illSrc(p)+'" alt="'+esc(p.alt)+', seen with '+p.name.toLowerCase()+'"></div>'+
+    '<div class="t"><b>'+pad(n)+' · '+p.title+'</b><span>'+p.name+'</span><i>'+p.plain+'</i></div>';
+  $("track").appendChild(t);
+
+  /* photograph scene */
+  var s=document.createElement("section");
+  s.className="scene"+(i%2?" flip":""); s.id="shot-"+n;
+  var ill = p.fx==="colour"
+    ? CVD.map(function(c,k){return '<img class="ill v'+(k===0?' on':'')+'" data-k="'+c.key+'" src="'+EDITED+p.file.replace(".jpg","-"+c.key+".jpg")+'" alt="" aria-hidden="true">'}).join("")
+    : '<img class="ill" src="'+EDITED+p.file+'" alt="" aria-hidden="true">';
+  var clear2 = p.fx==="double" ? '<img class="clear2" src="'+ORIGINAL+p.file+'" alt="" aria-hidden="true">' : "";
+  var mini = p.day ? '<figure class="mini"><img src="'+ORIGINAL+p.day+'" alt="The same palm trees in bright midday sun"><figcaption>The same spot, at midday</figcaption></figure>' : "";
+  var cvdUI = p.fx==="colour" ? '<div class="cvd" role="group" aria-label="Type of colour blindness"><div class="opts">'+
+      CVD.map(function(c,k){return '<button type="button" data-k="'+c.key+'" aria-pressed="'+(k===0)+'">'+c.name+'</button>'}).join("")+
+      '</div><p class="note" aria-live="polite">'+CVD[0].note+'</p></div>' : "";
+  s.innerHTML=
+    '<span class="bignum" aria-hidden="true">'+pad(n)+'</span>'+
+    '<div class="stage"><figure class="frame" tabindex="0" data-fx="'+p.fx+'" style="--ar:'+p.ar+(p.cx?';--cx:'+p.cx+';--cy:'+p.cy:'')+'">'+
+      '<div class="stack">'+ill+clear2+'<img class="clear" src="'+ORIGINAL+p.file+'" alt="'+esc(p.alt)+'"></div>'+
+      '<span class="tag"></span><span class="hint">Move the magnifier over the photo</span></figure></div>'+
+    '<div class="cap"><p class="num"><b>'+pad(n)+'</b> / '+pad(N)+' · '+p.fam+'</p><h2>'+p.name+'</h2>'+
+      '<p class="plain">'+p.plain+'</p><p class="moment">'+p.title+'<span>, 2026</span></p><p class="desc">'+p.desc+'</p>'+mini+cvdUI+'</div>';
+  $("scenes").appendChild(s);
+  var sc={p:p,i:i,el:s,fig:s.querySelector(".frame"),stage:s.querySelector(".stage"),cap:s.querySelector(".cap"),
+          num:s.querySelector(".bignum"),tag:s.querySelector(".tag"),inView:false,hover:false,cvd:CVD[0]};
+  scenes.push(sc); bindReveal(sc); setTag(sc);
+  if(p.fx==="colour") setupCVD(sc);
+
+  /* jump dots */
+  var d=document.createElement("a"); d.href="#photo-"+n; d.title=pad(n)+" "+p.name; d.setAttribute("aria-label",pad(n)+" "+p.name);
+  $("dots").appendChild(d);
+
+  /* method table */
+  var tr=document.createElement("tr");
+  tr.innerHTML='<td>'+pad(n)+'</td><td class="c">'+p.name+'<small>'+p.plain+'</small></td><td>'+p.research+'</td><td>'+p.how+'</td><td><a href="'+p.src[1]+'">'+p.src[0]+'</a></td>';
+  $("method").appendChild(tr);
+});
+var reelEnd=document.createElement("div"); reelEnd.className="reel-end";
+reelEnd.innerHTML='<p>Fourteen moments. One ordinary day.</p><a class="pill" href="#photographs">Reveal them one by one <span aria-hidden="true">→</span></a>';
+$("track").appendChild(reelEnd);
+
+/* conditions page, grouped */
+FAMILIES.forEach(function(f){
+  var b=document.createElement("div"); b.className="fam-block";
+  var rows=PHOTOS.map(function(p,i){ if(p.fam!==f[0]) return "";
+    return '<a class="row-c" href="#photo-'+(i+1)+'"><span class="n">'+pad(i+1)+'</span><div class="th"><img loading="lazy" src="'+illSrc(p)+'" alt="'+esc(p.alt)+'"></div>'+
+      '<h3>'+p.name+'</h3><p>'+p.plain+'</p><span class="go">'+p.title+' →</span></a>' }).join("");
+  b.innerHTML='<div><h2>'+f[0]+'</h2><p class="fam-note">'+f[1]+'</p></div><div>'+rows+'</div>';
+  $("families").appendChild(b);
+});
+
+/* ---------- The magnifier reveal ----------
+   Only a real mouse movement over a photo reveals it. A photo that scrolls under a still
+   mouse stays as the condition sees it, so every photo is met in its edited state first. */
+function setTag(sc){
+  var t = sc.hover ? "Original photo" : (sc.p.fx==="colour" ? sc.cvd.name : sc.p.name);
+  if(sc.tag.textContent!==t) sc.tag.textContent=t;
+}
+function bindReveal(sc){
+  var fig=sc.fig, touch=false, mergeT=null;
+  function set(on){
+    if(on===sc.hover) return;
+    sc.hover=on; fig.classList.toggle("hover",on); setTag(sc);
+    clearTimeout(mergeT); fig.classList.remove("merged");
+    if(on && sc.p.fx==="double") mergeT=setTimeout(function(){fig.classList.add("merged")},700);
+  }
+  sc.set=set;
+  fig.addEventListener("mousemove",function(e){ if(!touch && (e.movementX||e.movementY)) set(true) });
+  fig.addEventListener("mouseleave",function(){ if(!touch) set(false) });
+  fig.addEventListener("focus",function(){ if(!touch) set(true) });
+  fig.addEventListener("blur",function(){ set(false) });
+  fig.addEventListener("touchstart",function(){ touch=true; fig.querySelector(".hint").textContent="Tap the photo to reveal it" },{passive:true});
+  fig.addEventListener("click",function(){ if(touch) set(!sc.hover) });
+}
+
+/* ---------- Colour blindness switcher ---------- */
+function setupCVD(sc){
+  var btns=[].slice.call(sc.el.querySelectorAll(".cvd button")), imgs=[].slice.call(sc.el.querySelectorAll(".ill.v")), note=sc.el.querySelector(".cvd .note");
+  btns.forEach(function(b){ b.addEventListener("click",function(){
+    var key=b.getAttribute("data-k");
+    sc.cvd=CVD.filter(function(c){return c.key===key})[0];
+    btns.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
+    imgs.forEach(function(im){im.classList.toggle("on",im.getAttribute("data-k")===key)});
+    note.textContent=sc.cvd.note; setTag(sc);
+  })});
+}
+
+/* ---------- Background follows the scene on screen ---------- */
+function isDark(hex){var n=parseInt(hex.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;return (r*299+g*587+b*114)/1000<128}
+var curTone=null;
+function tone(hex){
+  if(hex===curTone) return; curTone=hex; var st=document.body.style;
+  if(!hex){["--bg","--fg","--mu","--ru","--ac"].forEach(function(k){st.removeProperty(k)}); return}
+  var d=isDark(hex);
+  st.setProperty("--bg",hex); st.setProperty("--fg",d?"#F1F2EE":"#131718"); st.setProperty("--mu",d?"#A4ADAA":"#556166");
+  st.setProperty("--ru",d?"#30363A":"#C9CFCC"); st.setProperty("--ac",d?"#A3A9FF":"#3B43C9");
+}
+
+/* ---------- One animation loop ---------- */
+var view="", dots=[].slice.call($("dots").children), reel={s:0}, heroS=-1;
+function frame(now){
+  var vh=innerHeight;
+  if(view==="photo"){
+    var active=-1;
+    scenes.forEach(function(sc,k){
+      var r=sc.el.getBoundingClientRect(), fr=sc.fig.getBoundingClientRect();
+      /* the frame opens when the photo is well into view; it closes again once fully off screen */
+      if(!sc.inView && fr.top<vh*.75 && fr.bottom>vh*.2){ sc.inView=true; sc.el.classList.add("in") }
+      if(sc.inView && (r.top>vh*1.05 || r.bottom<-vh*.05)){ sc.inView=false; sc.el.classList.remove("in"); sc.set(false) }
+      if(!RM && r.bottom>-vh*.3 && r.top<vh*1.3){
+        /* depth: the number drifts faster than the page, the photo and caption a little */
+        var prog=clamp((vh-fr.top)/(vh+fr.height),0,1)-.5;
+        sc.stage.style.transform="translate3d(0,"+(prog*28).toFixed(1)+"px,0)";
+        sc.num.style.transform="translate3d(0,"+(-prog*vh*.32).toFixed(1)+"px,0)";
+        sc.cap.style.transform="translate3d(0,"+(-prog*44).toFixed(1)+"px,0)";
+      }
+      if(r.top<=vh*.5 && r.bottom>vh*.5) active=k;
+    });
+    dots.forEach(function(d,k){d.classList.toggle("now",k===active)});
+    if(active>=0) tone(PHOTOS[active].bg);
+    else if($("endcard").getBoundingClientRect().top<vh*.5) tone(PHOTOS[N-1].bg);
+    else tone(null);
+  }
+  if(view==="home"){
+    var y=scrollY, hero=$("hero"), hh=hero.offsetHeight;
+    if(y<hh+50 && y!==heroS){ heroS=y;
+      $("heroStage").style.transform="translate3d(0,"+(y*.32).toFixed(1)+"px,0)";
+      $("heroCopy").style.transform="translate3d(0,"+(y*.14).toFixed(1)+"px,0)";
+      $("heroCopy").style.filter="blur("+Math.min(10,y/hh*12).toFixed(2)+"px)";        /* the title goes out of focus as you leave it */
+    }
+    var rr=$("reel").getBoundingClientRect(), track=$("track"), span=Math.max(0,track.scrollWidth-innerWidth);
+    var target = RM ? 0 : clamp(-(rr.top-_nav)/(rr.height-(vh-_nav)),0,1);
+    reel.s += (target-reel.s)*.14; if(Math.abs(target-reel.s)<.0004) reel.s=target;
+    if(!RM) track.style.transform="translate3d("+(-reel.s*span).toFixed(1)+"px,0,0)";
+    /* the frame nearest the middle is in focus; the rest blur with distance */
+    var mid=innerWidth/2, best=0, bestD=1e9;
+    [].forEach.call(track.querySelectorAll(".tile"),function(t,k){
+      var b=t.getBoundingClientRect(), dd=Math.abs(b.left+b.width/2-mid);
+      if(dd<bestD){bestD=dd;best=k}
+      if(!RM) t.querySelector("img").style.filter="blur("+Math.min(9,Math.max(0,dd-b.width*.35)/innerWidth*22).toFixed(2)+"px)";
+    });
+    var cnt=pad(best+1)+" / "+pad(N); if($("reelCount").textContent!==cnt) $("reelCount").textContent=cnt;
+  }
+  requestAnimationFrame(frame);
+}
+var _nav=50;
+function sizeReel(){
+  var track=$("track"), span=Math.max(0,track.scrollWidth-innerWidth);
+  $("reel").style.height = RM ? "auto" : (span + innerHeight) + "px";
+  _nav=$("nav").offsetHeight; document.documentElement.style.setProperty("--navh",_nav+"px");
+}
+addEventListener("resize",sizeReel);
+addEventListener("load",sizeReel);
+
+/* Home: the magnifier clears a circle of the photograph */
+(function(){
+  var st=$("heroStage");
+  function move(x,y){var r=st.getBoundingClientRect(); st.style.setProperty("--x",(x-r.left)+"px"); st.style.setProperty("--y",(y-r.top)+"px")}
+  st.addEventListener("mousemove",function(e){move(e.clientX,e.clientY)});
+  st.addEventListener("touchmove",function(e){var t=e.touches[0]; move(t.clientX,t.clientY)},{passive:true});
+})();
+
+/* ---------- Pages: #home, #photographs (#photo-1 … #photo-14), #conditions, #about ---------- */
+function route(){
+  var h=(location.hash||"#home").slice(1), v="home", target=null, m=/^photo-(\d+)$/.exec(h);
+  if(h==="photographs"){v="photo"}
+  else if(m && +m[1]>=1 && +m[1]<=N){v="photo"; target=$("shot-"+m[1])}
+  else if(h==="conditions"||h==="about"){v=h}
+  var changed = v!==view; view=v;
+  ["home","photo","conditions","about"].forEach(function(k){$("v-"+k).classList.toggle("on",k===v)});
+  document.body.classList.toggle("photo-on",v==="photo");
+  var nav = v==="photo" ? "photographs" : v;
+  [].forEach.call(document.querySelectorAll("[data-nav]"),function(a){
+    if(a.getAttribute("data-nav")===nav) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+  });
+  if(v!=="photo") tone(null);
+  if(v==="home"){heroS=-1; sizeReel()}
+  if(target){
+    var fr=target.querySelector(".frame"), top=fr.getBoundingClientRect().top+scrollY;
+    goTo(top-(innerHeight-fr.offsetHeight)/2-_nav/2,changed);          /* centre the photo on screen */
+  } else if(changed) goTo(0,true);
+}
+addEventListener("hashchange",route);
+sizeReel(); route(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>
