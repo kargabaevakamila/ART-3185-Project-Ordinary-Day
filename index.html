@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>An Ordinary Day</title>
+<title>An Ordinary Day | ART3185 photo essay on visual impairment</title>
+<meta name="description" content="An Ordinary Day: 14 photographs of one day in Hong Kong, each shown as people with a different visual impairment might see it. ART3185 Digital Imaging and Interactive Media, EdUHK, 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,6 +40,7 @@ em.serif{font-family:var(--body);font-style:italic;font-weight:400;font-stretch:
 /* Words that wait out of focus; the magnifier clears them */
 .soft{filter:blur(2.4px);transition:filter .6s ease;cursor:var(--lens)}
 .soft:hover{filter:none}
+@media (hover:none){.soft{filter:none}}
 
 /* Top bar */
 .nav{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 24px;padding:13px var(--gutter);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--ru);transition:background-color 1.4s ease,border-color 1.4s ease}
@@ -173,6 +175,7 @@ em.serif{font-family:var(--body);font-style:italic;font-weight:400;font-stretch:
 .scene.in .cap > :nth-child(4){transition-delay:.38s}
 .scene.in .cap > :nth-child(5){transition-delay:.52s}
 .scene.in .cap > :nth-child(6){transition-delay:.66s}
+.scene.in .cap > :nth-child(7){transition-delay:.8s}
 .cap .num{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;color:var(--mu);font-variant-numeric:tabular-nums}
 .cap .num b{font-weight:500;color:var(--ac)}
 .cap h2{font-size:clamp(2rem,3.7vw,3.5rem);font-stretch:112%;transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.75,.1,1),filter 1.6s ease;filter:blur(8px)}
@@ -181,6 +184,12 @@ em.serif{font-family:var(--body);font-style:italic;font-weight:400;font-stretch:
 .cap .moment{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);border-top:1px solid var(--ru);padding-top:12px;transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.75,.1,1),border-color 1.4s}
 .cap .moment span{color:var(--mu)}
 .cap .desc{font-size:1.04rem;line-height:1.55;max-width:38ch;color:var(--mu)}
+.cap .step{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.cap .step a{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ru);border-radius:999px;padding:8px 14px;transition:background-color .25s,color .25s,border-color .25s}
+.cap .step a:hover,.cap .step a:focus-visible{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.site-foot{padding:28px var(--gutter) 34px;border-top:1px solid var(--ru);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.site-foot a{color:inherit}
+.photo-on .site-foot{display:none}
 .mini{display:flex;gap:12px;align-items:center;margin:2px 0 0}
 .mini img{width:120px;height:auto;border-radius:2px}
 .mini figcaption{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
@@ -268,7 +277,7 @@ html.rm .frame,html.rm .stack,html.rm .cap > *{clip-path:none;opacity:1;transfor
     <a href="#home" data-nav="home">Home</a>
     <a href="#photographs" data-nav="photographs">Photographs</a>
     <a href="#conditions" data-nav="conditions">Conditions</a>
-    <a href="#about" data-nav="about">About the project</a>
+    <a href="#about" data-nav="about">About &amp; contact</a>
   </nav>
 </header>
 
@@ -371,7 +380,7 @@ html.rm .frame,html.rm .stack,html.rm .cap > *{clip-path:none;opacity:1;transfor
           <ul>
             <li>All photographs were taken by Kamila Kargabaeva in Hong Kong in 2026.</li>
             <li>The edited versions are illustrations, not medical reproductions. People with the same condition see differently.</li>
-            <li>Website code built with help from Claude (Anthropic).</li>
+            <li>The edit recipes and the website code were developed with help from Claude (Anthropic). The effects use standard Photoshop tools; no generative fill or AI image generation was used.</li>
           </ul>
         </section>
       </div>
@@ -400,6 +409,11 @@ html.rm .frame,html.rm .stack,html.rm .cap > *{clip-path:none;opacity:1;transfor
 
 </main>
 
+<footer class="site-foot">
+  <span>An Ordinary Day · Kamila Kargabaeva · SID 11534331 · ART3185 · 2026</span>
+  <span><a href="#home">Home</a> · <a href="#about">About &amp; contact</a></span>
+</footer>
+
 <script>
 /* ============================================================
    EDIT HERE: the photographs, in order.
@@ -421,31 +435,31 @@ var PHOTOS = [
    src:["RNIB, myopia (short-sightedness)","https://www.rnib.org.uk/your-eyes/eye-conditions-az/myopia-short-sightedness/"]},
   {file:"02-first-light.jpg", ar:1.5748, fx:"cataract", fam:"Light", bg:"#ECEBE3",
    name:"Cataract", plain:"Clouding of the eye's lens", title:"View from the Dorm",
-   desc:"The morning view looks as if someone breathed on the glass. The red roof turns dull, the hills lose their edges and the light becomes glare.",
-   alt:"A red-tiled roof below green hills in soft morning light",
+   desc:"The view from the dorm looks as if someone breathed on the glass. The red roof turns dull, the hills lose their edges and the light becomes glare.",
+   alt:"A red-tiled roof below green hills in soft light",
    research:"A cloudy lens makes vision blurry or hazy and colours look faded.",
-   how:"Lower contrast and saturation, a warm yellow tint, a soft white haze and slight blur.",
-   src:["National Eye Institute, cataracts","https://www.nei.nih.gov/health/cataract"]},
+   how:"A soft blur, a glow of glare, a pale haze and a warm yellow tint.",
+   src:["National Eye Institute, cataracts","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts"]},
   {file:"03-kerbside.jpg", ar:1.5004, fx:"double", fam:"Focus", bg:"#E2E4E0",
    name:"Diplopia", plain:"Double vision", title:"Crossing the Road",
    desc:"Every road marking appears twice. Which yellow line is the real one? Stepping off the pavement turns into a guess.",
    alt:"Looking down at a foot stepping over a yellow road marking",
    research:"Looking at one object but seeing two images of it.",
    how:"Duplicate layer moved sideways at reduced opacity, so every edge appears twice.",
-   src:["NHS, double vision","https://www.nhs.uk/conditions/double-vision/"]},
+   src:["Moorfields Eye Hospital, double vision (diplopia)","https://www.moorfields.nhs.uk/for-patients/information-hub/diplopia-double-vision-and-driving"]},
   {file:"04-next-train.jpg", ar:1.4993, fx:"astig", fam:"Focus", bg:"#D7DCDB",
    name:"Astigmatism", plain:"Blurred, streaky vision at every distance", title:"Waiting for the Train",
    desc:"Under the platform's strip lights, every edge smears and every light streaks. The arrival screen stays out of reach, however close you stand.",
    alt:"A man looks at his phone beside platform screen doors in a station",
    research:"Blurred or distorted vision, both near and far.",
-   how:"Streaks of light from the ceiling lamps and a faint offset duplicate, so edges smear and double.",
+   how:"The brightest lights are stretched into diagonal streaks, and the rest of the scene is softened and smeared in the same direction.",
    src:["World Health Organization, refractive errors","https://www.who.int/news-room/questions-and-answers/item/blindness-and-vision-impairment-refractive-errors"]},
   {file:"05-walkway.jpg", ar:1.5060, fx:"periphery", fam:"Field", bg:"#E1E5E3",
    name:"Glaucoma", plain:"Loss of side vision", title:"Walking to Class",
    desc:"The walkway ahead is clear, but the planters, railings and people at the sides slip away. Glaucoma often takes side vision so slowly that people don't notice it going.",
    alt:"A paved campus walkway lined with flower beds under a blue sky",
    research:"Glaucoma usually takes side vision first; it can feel like looking through a tunnel.",
-   how:"Blurred, darkened edges around a clear centre, with an uneven boundary instead of a perfect ring.",
+   how:"Blurred, darker, paler-coloured edges around a clear centre, with an uneven boundary instead of a perfect ring.",
    src:["National Eye Institute, glaucoma","https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/glaucoma"]},
   {file:"06-block-b2.jpg", ar:1.4104, fx:"patches", fam:"Field", bg:"#E4E1D9",
    name:"Diabetic retinopathy", plain:"Dark spots from damaged blood vessels in the eye", title:"Finding the Room",
@@ -453,7 +467,7 @@ var PHOTOS = [
    alt:"A grey campus directory sign for Block B2 with arrows and room names",
    research:"Blurry vision and dark floating spots or streaks.",
    how:"Irregular dark blotches over the room names and arrows, plus an overall blur.",
-   src:["National Eye Institute, diabetic retinopathy","https://www.nei.nih.gov/health/diabetic/retinopathy"]},
+   src:["National Eye Institute, diabetic retinopathy","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/diabetic-retinopathy"]},
   {file:"07-small-print.jpg", ar:1.4255, fx:"hyperopia", fam:"Focus", bg:"#E9E6EE",
    name:"Hyperopia", plain:"Long-sightedness", title:"At 7-Eleven",
    desc:"The bright packets are easy to spot from across the shop. Up close, the flavours and prices dissolve, just when you need to read them.",
@@ -466,7 +480,7 @@ var PHOTOS = [
    desc:"Midday sun bounces off the pale paving and the tables. Lunch outside becomes something to squint through, then escape from.",
    alt:"People eating at outdoor tables on a campus podium under a bright sky",
    research:"Bright light causes discomfort; people squint or shield their eyes.",
-   how:"Raised exposure and highlights, lower contrast, and a bloom of light from the sky.",
+   how:"Exposure raised, colour drained, a bloom of glare from the bright areas and a pale white haze.",
    src:["Cleveland Clinic, photophobia","https://my.clevelandclinic.org/health/symptoms/photophobia"]},
   {file:"09-through-ball.jpg", ar:1.5004, fx:"oneeye", fam:"Field", bg:"#E8E3D3",
    name:"Amblyopia", plain:"Lazy eye", title:"Football After Class",
@@ -474,41 +488,41 @@ var PHOTOS = [
    alt:"Two players chase a football in front of a goal on a green pitch",
    research:"Poor vision in one eye makes it hard to tell how near or far something is.",
    how:"A blurred, shifted copy layered over the scene, so the players and the ball no longer line up.",
-   src:["National Eye Institute, amblyopia","https://www.nei.nih.gov/health/amblyopia/amblyopia_guide"]},
+   src:["National Eye Institute, amblyopia","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/amblyopia-lazy-eye"]},
   {file:"10-catching-up.jpg", ar:1.4993, fx:"central", cx:"45%", cy:"34%", fam:"Field", bg:"#E5DACA",
    name:"Macular degeneration", plain:"Loss of central vision", title:"Meeting a Friend",
    desc:"A friend laughs across the table, but the centre of the view, where her face should be, is missing. Everything around her stays sharp.",
    alt:"A smiling woman in a patterned headscarf raises an iced tea outside a glass building",
    research:"Age-related macular degeneration blurs central vision; a blurry or blank area can form near the centre.",
    how:"A soft, dark, blurred patch over the face; everything around it stays sharp.",
-   src:["National Eye Institute, age-related macular degeneration","https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/age-related-macular-degeneration"]},
+   src:["National Eye Institute, age-related macular degeneration","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/age-related-macular-degeneration"]},
   {file:"11-half-a-slide.jpg", ar:0.8845, fx:"hemi", fam:"Field", bg:"#1B1E23",
    name:"Hemianopia", plain:"Loss of half the field of vision", title:"Evening Lecture",
    desc:"The left half of every line on the slide is gone. You start reading from the middle of each sentence and keep turning your head to find where it begins.",
    alt:"A lecturer points at a bright slide about responsible AI use in a dark lecture room",
    research:"Vision loss on the same side of both eyes, usually after a stroke or brain injury; half the view can look dim or dark, and reading becomes hard.",
-   how:"Dark gradient over the left half of the frame, softened at the edge so the middle stays readable.",
-   src:["Cleveland Clinic, homonymous hemianopia","https://my.clevelandclinic.org/health/diseases/15766-homonymous-hemianopsia"]},
+   how:"A solid dark block over the left half of the frame, with the edge softened so it fades in down the middle.",
+   src:["Cleveland Clinic, homonymous hemianopia","https://my.clevelandclinic.org/health/symptoms/homonymous-hemianopsia"]},
   {file:"12-same-palms.jpg", day:"12-same-palms-day.jpg", ar:1.4641, fx:"lowlight", fam:"Light", bg:"#0E1114",
    name:"Night blindness", plain:"Poor vision in dim light", title:"Palms at Dusk",
    desc:"The same palm trees that were bright at midday disappear as the light fades. Eyes that cannot adjust to the dark lose the path home.",
    alt:"Palm trees in silhouette against a dusk sky with a small moon",
    research:"Night blindness (nyctalopia) makes it hard to see in dim light and to adjust between bright and dark.",
-   how:"Exposure and shadows pulled far down, colour reduced and noise added; the daytime photo shows the same place for comparison.",
-   src:["Cleveland Clinic, night blindness","https://my.clevelandclinic.org/health/symptoms/10118-night-blindness-nyctalopia"]},
+   how:"The whole photo darkened sharply, colour drained, a slight blur and grain added; the daytime photo shows the same place for comparison.",
+   src:["Cleveland Clinic, night blindness","https://my.clevelandclinic.org/health/articles/24309-night-vision"]},
   {file:"13-ripe-or-not.jpg", ar:1.5004, fx:"colour", fam:"Colour", bg:"#201D19",
    name:"Colour blindness", plain:"Colour vision deficiency", title:"Fruit Market",
    desc:"At the fruit stall, ripe and unripe can look the same. Switch between four types of colour blindness to see how the avocados, kiwis and persimmons change.",
    alt:"A market stall stacked with avocados, kiwis, persimmons and pomelos",
    research:"Some colours become hard to tell apart; red-green is the most common type.",
-   how:"Four versions, one for each type: protanopia, deuteranopia, tritanopia and achromatopsia. Viewers can switch between them.",
+   how:"Four versions, one for each type, made with colour mixing (Channel Mixer): protanopia, deuteranopia, tritanopia and achromatopsia. Viewers can switch between them.",
    src:["National Eye Institute, colour blindness","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/color-blindness"]},
   {file:"14-dinner.jpg", ar:1.5038, fx:"lowvision", fam:"Beyond sight", bg:"#141619",
    name:"Severe low vision", plain:"Very little usable sight, even with glasses", title:"Cooking Dinner",
    desc:"At the end of the day, dinner is made with sound and smell as much as sight. The sizzle says when to turn the patties; the hand knows where the pan is.",
    alt:"A hand turning patties in a frying pan, seen from above",
    research:"Low vision can't be fully corrected with glasses; people rely more on other senses and tools.",
-   how:"Heavy blur and low contrast, so only light, dark and the shape of the pan remain.",
+   how:"Heavy blur, less colour and a pale haze, so only light, dark and the shape of the pan remain.",
    src:["National Eye Institute, low vision","https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/low-vision"]}
 ];
 var FAMILIES = [
@@ -537,6 +551,11 @@ function illSrc(p){ return p.fx==="colour" ? EDITED+p.file.replace(".jpg","-"+CV
 function goTo(y,instant){ scrollTo({top:y,behavior:instant||RM?"auto":"smooth"}) }
 
 /* ---------- Build pages ---------- */
+function stepNav(n){
+  var prev = n>1 ? '<a href="#photo-'+(n-1)+'" rel="prev"><span aria-hidden="true">←</span> Previous</a>' : '<a href="#home"><span aria-hidden="true">←</span> Home</a>';
+  var next = n<N ? '<a href="#photo-'+(n+1)+'" rel="next">Next <span aria-hidden="true">→</span></a>' : '<a href="#conditions">All conditions <span aria-hidden="true">→</span></a>';
+  return '<div class="step">'+prev+next+'</div>';
+}
 var scenes=[];
 PHOTOS.forEach(function(p,i){
   var n=i+1;
@@ -564,7 +583,7 @@ PHOTOS.forEach(function(p,i){
       '<div class="stack">'+ill+clear2+'<img class="clear" src="'+ORIGINAL+p.file+'" alt="'+esc(p.alt)+'"></div>'+
       '<span class="tag"></span><span class="hint">Move the magnifier over the photo</span></figure></div>'+
     '<div class="cap"><p class="num"><b>'+pad(n)+'</b> / '+pad(N)+' · '+p.fam+'</p><h2>'+p.name+'</h2>'+
-      '<p class="plain">'+p.plain+'</p><p class="moment">'+p.title+'<span>, 2026</span></p><p class="desc">'+p.desc+'</p>'+mini+cvdUI+'</div>';
+      '<p class="plain">'+p.plain+'</p><p class="moment">'+p.title+'<span>, 2026</span></p><p class="desc">'+p.desc+'</p>'+mini+cvdUI+stepNav(n)+'</div>';
   $("scenes").appendChild(s);
   var sc={p:p,i:i,el:s,fig:s.querySelector(".frame"),stage:s.querySelector(".stage"),cap:s.querySelector(".cap"),
           num:s.querySelector(".bignum"),tag:s.querySelector(".tag"),inView:false,hover:false,cvd:CVD[0]};
@@ -712,6 +731,7 @@ function route(){
   else if(m && +m[1]>=1 && +m[1]<=N){v="photo"; target=$("shot-"+m[1])}
   else if(h==="conditions"||h==="about"){v=h}
   var changed = v!==view; view=v;
+  document.title = (v==="photo" ? (m ? pad(+m[1])+" "+PHOTOS[+m[1]-1].name+" | " : "Photographs | ") : v==="conditions" ? "Conditions | " : v==="about" ? "About & contact | " : "") + "An Ordinary Day";
   ["home","photo","conditions","about"].forEach(function(k){$("v-"+k).classList.toggle("on",k===v)});
   document.body.classList.toggle("photo-on",v==="photo");
   var nav = v==="photo" ? "photographs" : v;
